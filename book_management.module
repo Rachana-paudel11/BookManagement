@@ -1,0 +1,146 @@
+<?php
+
+/**
+ * @file book_management.module
+ * PURPOSE: This is the primary glue file for the module.
+ * It contains all the hooks that allow the module to interact with Drupal core.
+ * Specifically, it handles the Color Picker on forms, the Admin Toolbar icon, 
+ * and the "High-Performance Injection Engine" that renders the book cards on the frontend.
+ */
+
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_form_alter().
+ * PURPOSE: Transforms the color text field into a visual color picker UI.
+ */
+function book_management_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'book_item_add_form' || $form_id === 'book_item_edit_form') {
+    if (isset($form['color'])) {
+      $form['color']['widget'][0]['value']['#type'] = 'color';
+      $form['color']['widget'][0]['value']['#title'] = t('Pick Background Color');
+    }
+  }
+}
+
+/**
+ * Implements hook_toolbar().
+ * PURPOSE: Adds the module link and book icon to the main Drupal admin toolbar.
+ */
+function book_management_toolbar() {
+  $items = [];
+  $items['book_management'] = [
+    '#type' => 'toolbar_item',
+    'tab' => [
+      '#type' => 'link',
+      '#title' => t('Books'),
+      '#url' => Url::fromRoute('entity.book_item.collection'),
+      '#attributes' => [
+        'title' => t('Manage your books'),
+        'class' => ['toolbar-icon', 'toolbar-icon-book-management'],
+      ],
+    ],
+    '#weight' => 10,
+    '#attached' => [
+      'library' => ['book_management/toolbar'],
+    ],
+  ];
+  return $items;
+}
+
+/**
+ * Implements hook_page_attachments().
+ * PURPOSE: Ensures the admin toolbar CSS is attached globally so the book icon appears.
+ */
+function book_management_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'book_management/toolbar';
+}
+
+/**
+ * Implements hook_node_view().
+ * PURPOSE: The "Stability Engine". It finds [book_cards] text in node bodies 
+ * and replaces it with the premium rendered HTML cards. This method is used instead 
+ * of traditional shortcodes to prevent theme conflicts and server crashes.
+ */
+function book_management_node_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+  if (isset($build['body'][0]['#text'])) {
+    $text = $build['body'][0]['#text'];
+    
+    // Find all occurrences of the book_cards tag
+    if (preg_match_all('/\[?book_cards(\s+id="([\d,]+)")?\]?/', $text, $matches, PREG_SET_ORDER)) {
+      $final_text = $text;
+      $has_rendered = FALSE;
+
+      foreach ($matches as $match) {
+        $full_tag = $match[0];
+        $ids_string = !empty($match[2]) ? $match[2] : NULL;
+        
+        $rendered_html = book_management_render_books($ids_string);
+        if ($rendered_html) {
+          $final_text = str_replace($full_tag, $rendered_html, $final_text);
+          $has_rendered = TRUE;
+        }
+      }
+
+      if ($has_rendered) {
+        $build['body'][0]['#text'] = Markup::create($final_text);
+        $build['#attached']['library'][] = 'book_management/book_cards';
+      }
+    }
+  }
+}
+
+/**
+ * Helper function to render book cards.
+ * PURPOSE: Fetches data from the database and builds the Glassmorphism HTML structure.
+ */
+function book_management_render_books($ids_string = NULL) {
+  try {
+    $storage = \Drupal::entityTypeManager()->getStorage('book_item');
+    $query = $storage->getQuery()->accessCheck(FALSE);
+    
+    if ($ids_string) {
+      $ids = explode(',', $ids_string);
+      $query->condition('id', $ids, 'IN');
+    }
+    
+    $found_ids = $query->execute();
+    if (empty($found_ids)) return "";
+
+    $books = $storage->loadMultiple($found_ids);
+    $output = '<div class="bm-book-grid">';
+    
+    foreach ($books as $book) {
+      $color = $book->get('color')->value ?: '#6c5ce7';
+      $title = $book->label();
+      $desc = $book->get('description')->value ?? '';
+      $image_url = ($img = $book->get('image')->entity) ? \Drupal::service('file_url_generator')->generateAbsoluteString($img->getFileUri()) : "";
+      $pdf_url = ($pdf = $book->get('pdf')->entity) ? \Drupal::service('file_url_generator')->generateAbsoluteString($pdf->getFileUri()) : "";
+      
+      $img_html = $image_url ? "<div class='bm-card-image-outer'><div class='bm-card-image'><img src='$image_url' alt='$title'></div></div>" : "";
+      $btn_html = $pdf_url ? "<div class='bm-card-footer'><a href='$pdf_url' class='bm-btn-capsule' target='_blank'><span class='bm-btn-text'>Download</span></a></div>" : "";
+
+      $output .= "
+        <div class='bm-card-wrapper'>
+          <div class='bm-glass-card' style='--card-color: $color'>
+            <div class='bm-card-glow'></div>
+            <div class='bm-card-content'>
+              $img_html
+              <div class='bm-card-info'>
+                <h3 class='bm-card-title'>$title</h3>
+                <div class='bm-card-description'>$desc</div>
+                $btn_html
+              </div>
+            </div>
+          </div>
+        </div>";
+    }
+    $output .= '</div>';
+    return $output;
+  }
+  catch (\Exception $e) {
+    return "";
+  }
+}

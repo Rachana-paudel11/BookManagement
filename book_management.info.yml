@@ -1,0 +1,9 @@
+# book_management.info.yml
+# PURPOSE: This is the core metadata file for the module. 
+# It tells Drupal the module's name, version, and dependencies, and allows it to be enabled in the Admin UI.
+
+name: 'Book Management'
+type: module
+description: 'Advanced book management system using the Content Entity API.'
+package: Custom
+core_version_requirement: ^10 || ^11

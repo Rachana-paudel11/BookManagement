@@ -1,0 +1,30 @@
+# book_management.links.menu.yml
+# PURPOSE: This file registers the module's navigation links in the Drupal Admin Toolbar.
+# It creates the main "Book Management" menu item and its sub-menu children.
+
+# Main Parent Menu
+book_management.main:
+  title: 'Book Management'
+  description: 'Manage your entire book library and settings.'
+  parent: system.admin
+  route_name: entity.book_item.collection
+  weight: -10
+  options:
+    attributes:
+      class: ['toolbar-icon-book-management']
+
+# Sub-menu: All Books
+book_management.list:
+  title: 'All Books'
+  description: 'View and manage all book entries.'
+  parent: book_management.main
+  route_name: entity.book_item.collection
+  weight: 1
+
+# Sub-menu: Add New Book
+book_management.add:
+  title: 'Add New Book'
+  description: 'Create a new book entry.'
+  parent: book_management.main
+  route_name: entity.book_item.add_form
+  weight: 2

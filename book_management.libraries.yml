@@ -1,0 +1,13 @@
+# book_management.libraries.yml
+# PURPOSE: This file defines the CSS and JS assets (libraries) used by the module.
+# It allows us to load the 'book_cards' styles only when needed and the 'toolbar' icon styles on admin pages.
+
+book_cards:
+  css:
+    theme:
+      css/book-cards.css: {}
+
+toolbar:
+  css:
+    theme:
+      css/toolbar.css: {}

@@ -1,0 +1,9 @@
+# book_management.links.action.yml
+# PURPOSE: This file defines local actions (buttons) in the admin interface.
+# It adds the "Add New Book" button to the top of the collection list page.
+
+entity.book_item.add_action:
+  route_name: 'entity.book_item.add_form'
+  title: 'Add New Book'
+  appears_on:
+    - entity.book_item.collection

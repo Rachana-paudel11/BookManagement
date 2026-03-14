@@ -1,0 +1,20 @@
+# book_management.routing.yml
+# PURPOSE: This file defines the URL paths for the module.
+# It maps human-readable URLs (like /admin/book-management) to specific controllers and permissions.
+
+entity.book_item.collection:
+  path: '/admin/book-management'
+  defaults:
+    _entity_list: 'book_item'
+    _title: 'Books'
+  requirements:
+    _permission: 'administer site configuration'
+
+# Alias for underscored version to ensure no 404s
+entity.book_item.collection_alt:
+  path: '/admin/book_management'
+  defaults:
+    _entity_list: 'book_item'
+    _title: 'Books'
+  requirements:
+    _permission: 'administer site configuration'

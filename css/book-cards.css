@@ -1,0 +1,117 @@
+/* 
+ * css/book-cards.css 
+ * PURPOSE: This file contains the premium "Glassmorphism" Design System.
+ * It applies the backdrop blur, translucent glows, and card animations to 
+ * the book shelf on the frontend.
+ */
+
+:root {
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.bm-book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 40px;
+  padding: 40px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bm-glass-card {
+  position: relative;
+  background-color: var(--card-color, #6c5ce7);
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
+  backdrop-filter: blur(15px) saturate(150%);
+  -webkit-backdrop-filter: blur(15px) saturate(150%);
+  border-radius: 30px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+  color: #fff;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+}
+
+.bm-glass-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+.bm-card-content {
+  padding: 30px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.bm-card-image-outer {
+  margin-bottom: 25px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  aspect-ratio: 1;
+}
+
+.bm-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bm-card-title {
+  color: #ffffff !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+}
+
+.bm-card-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  flex-grow: 1;
+}
+
+/* PREMIUM CAPSULE BUTTON */
+.bm-btn-capsule {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  color: white !important;
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
+  font-family: 'Outfit', sans-serif !important;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
+  padding: 12px 35px !important;
+  width: 100% !important;
+  border-radius: 50px !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  box-sizing: border-box !important;
+}
+
+.bm-btn-capsule:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.8) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.bm-card-footer {
+  margin-top: auto;
+  padding-top: 20px;
+}
