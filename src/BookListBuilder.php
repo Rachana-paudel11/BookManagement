@@ -24,6 +24,7 @@ class BookListBuilder extends EntityListBuilder {
     $header['shortcode'] = $this->t('Shortcode');
     $header['color']     = $this->t('Card Color');
     $header['image']     = $this->t('Cover Image');
+    $header['pdf']       = $this->t('Download PDF');
     return $header + parent::buildHeader();
   }
 
@@ -42,7 +43,7 @@ class BookListBuilder extends EntityListBuilder {
 
     $row['shortcode'] = [
       'data' => [
-        '#markup' => '<code style="background:#f1f5f9; padding:4px 8px; border-radius:4px;">[book_cards id="' . $entity->id() . '"]</code>',
+        '#markup' => '<code style="background:#f1f5f9; padding:4px 8px; border-radius:4px;">book_cards id="' . $entity->id() . '"</code>',
       ],
     ];
 
@@ -72,46 +73,26 @@ class BookListBuilder extends EntityListBuilder {
       $row['image'] = $this->t('—');
     }
 
+    $pdf = $entity->get('pdf')->entity;
+    if ($pdf) {
+      $row['pdf'] = [
+        'data' => [
+          '#markup' => '<span style="color: #ef4444; font-size: 18px;">📄</span> PDF Loaded',
+        ],
+      ];
+    }
+    else {
+      $row['pdf'] = $this->t('—');
+    }
+
     return $row + parent::buildRow($entity);
   }
 
   /**
-   * Renders the final table along with the "Master Your Library" help guide.
+   * Renders the final table.
    */
   public function render() {
     $build = parent::render();
-    
-    $build['help'] = [
-      '#type' => 'container',
-      '#weight' => -100,
-      '#attributes' => [
-        'class' => ['messages', 'messages--status'],
-        'style' => 'margin-bottom: 25px; border-left: 6px solid #6366f1; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); background: #ffffff;',
-      ],
-      'content' => [
-        '#markup' => '
-          <div style="padding: 15px 10px;">
-            <h3 style="margin: 0 0 12px 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
-               <span style="font-size: 24px;">📚</span> Master Your Library
-            </h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div>
-                <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>Single Book:</strong></p>
-                <code style="background: #eef2ff; padding: 4px 10px; border-radius: 6px; color: #4338ca; font-weight: 800;">[book_cards id="8"]</code>
-              </div>
-              <div>
-                <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>Multiple Books (Grid):</strong></p>
-                <code style="background: #eef2ff; padding: 4px 10px; border-radius: 6px; color: #4338ca; font-weight: 800;">[book_cards id="8,10,12"]</code>
-              </div>
-            </div>
-            <p style="margin: 15px 0 0 0; font-size: 13px; color: #64748b; font-style: italic;">
-              ✨ Tip: Typing <code style="font-weight:700;">[book_cards]</code> alone will display every book in your collection.
-            </p>
-          </div>
-        ',
-      ],
-    ];
-
     return $build;
   }
 }
