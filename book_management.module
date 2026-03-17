@@ -14,7 +14,8 @@ use Drupal\Core\Url;
 
 /**
  * Implements hook_form_alter().
- * PURPOSE: Transforms the color text field into a visual color picker UI.
+ * PURPOSE: Transforms the color text field into a visual color picker UI,
+ * and ensures the form redirects back to the book list after saving.
  */
 function book_management_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id === 'book_item_add_form' || $form_id === 'book_item_edit_form') {
@@ -22,7 +23,25 @@ function book_management_form_alter(&$form, FormStateInterface $form_state, $for
       $form['color']['widget'][0]['value']['#type'] = 'color';
       $form['color']['widget'][0]['value']['#title'] = t('Pick Background Color');
     }
+
+    // Add a custom submit handler to override the default redirect
+    // so the user goes back to the "All Books" table list page instead.
+    if (isset($form['actions'])) {
+      foreach (array_keys($form['actions']) as $action) {
+        if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+          $form['actions'][$action]['#submit'][] = 'book_management_form_submit_redirect';
+        }
+      }
+    }
   }
+}
+
+/**
+ * Custom submit handler for book forms.
+ * PURPOSE: Redirects to the book collection list after saving an entity.
+ */
+function book_management_form_submit_redirect(array &$form, FormStateInterface $form_state) {
+  $form_state->setRedirect('entity.book_item.collection');
 }
 
 /**

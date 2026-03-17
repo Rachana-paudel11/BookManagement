@@ -75,9 +75,10 @@ class BookListBuilder extends EntityListBuilder {
 
     $pdf = $entity->get('pdf')->entity;
     if ($pdf) {
+      $pdf_url = \Drupal::service('file_url_generator')->generateAbsoluteString($pdf->getFileUri());
       $row['pdf'] = [
         'data' => [
-          '#markup' => '<span style="color: #ef4444; font-size: 18px;">📄</span> PDF Loaded',
+          '#markup' => '<a href="' . $pdf_url . '" target="_blank" style="display:inline-flex; align-items:center; gap:6px; color:#ef4444; font-weight:600; text-decoration:none; padding:4px 8px; background:#fee2e2; border-radius:4px;"><span style="font-size:16px;">📄</span> View PDF</a>',
         ],
       ];
     }
