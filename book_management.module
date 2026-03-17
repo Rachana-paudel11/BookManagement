@@ -38,10 +38,21 @@ function book_management_form_alter(&$form, FormStateInterface $form_state, $for
 
 /**
  * Custom submit handler for book forms.
- * PURPOSE: Redirects to the book collection list after saving an entity.
+ * PURPOSE: Redirects to the appropriate page after saving an entity.
  */
 function book_management_form_submit_redirect(array &$form, FormStateInterface $form_state) {
-  $form_state->setRedirect('entity.book_item.collection');
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  
+  if ($route_name === 'entity.book_item.add_form') {
+    // When adding a new book, load a fresh new "Add Book" page.
+    $form_state->setRedirect('entity.book_item.add_form');
+  }
+  else {
+    // When editing an existing book, immediately reload the same edit page.
+    $form_object = $form_state->getFormObject();
+    $entity = $form_object->getEntity();
+    $form_state->setRedirect('entity.book_item.edit_form', ['book_item' => $entity->id()]);
+  }
 }
 
 /**
