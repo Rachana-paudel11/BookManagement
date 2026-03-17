@@ -42,15 +42,21 @@ function book_management_form_alter(&$form, FormStateInterface $form_state, $for
  */
 function book_management_form_submit_redirect(array &$form, FormStateInterface $form_state) {
   $route_name = \Drupal::routeMatch()->getRouteName();
+  $form_object = $form_state->getFormObject();
+  $entity = $form_object->getEntity();
   
   if ($route_name === 'entity.book_item.add_form') {
-    // When adding a new book, load a fresh new "Add Book" page.
-    $form_state->setRedirect('entity.book_item.add_form');
+    // Show a success message for a new entry.
+    \Drupal::messenger()->addStatus(t('Success! A new book entry has been created and saved.'));
   }
   else {
-    // When editing an existing book, immediately reload the same edit page.
-    $form_object = $form_state->getFormObject();
-    $entity = $form_object->getEntity();
+    // Show a success message for an edited entry.
+    \Drupal::messenger()->addStatus(t('Success! Your edits to this book have been updated.'));
+  }
+
+  // Both adding and editing should reload the same book's edit page 
+  // so the user remains on the record they exactly just saved.
+  if ($entity && $entity->id()) {
     $form_state->setRedirect('entity.book_item.edit_form', ['book_item' => $entity->id()]);
   }
 }
