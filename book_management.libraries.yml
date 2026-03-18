@@ -11,3 +11,16 @@ toolbar:
   css:
     theme:
       css/toolbar.css: {}
+
+admin_scripts:
+  css:
+    theme:
+      css/admin-form.css: {}
+  js:
+    js/admin-copy.js: {}
+    js/form-validation.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+    - core/drupal.dialog.ajax

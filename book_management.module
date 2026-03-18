@@ -19,19 +19,68 @@ use Drupal\Core\Url;
  */
 function book_management_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id === 'book_item_add_form' || $form_id === 'book_item_edit_form') {
+    
+    // 1. CONSISTENT SHORTCODE HELPER AT THE TOP (Visible on Add & Edit)
+    $entity = $form_state->getFormObject()->getEntity();
+    $entity_id = $entity->id();
+    $shortcode = $entity_id ? '[book_cards id="' . $entity_id . '"]' : t('Shortcode will appear here after your first save.');
+    
+    $form['shortcode_display'] = [
+      '#type' => 'container',
+      '#weight' => -100,
+      '#attributes' => ['class' => ['bm-consistent-helper']],
+    ];
+
+    $form['shortcode_display']['label'] = [
+      '#markup' => '<h4 class="bm-consistent-label">' . t('Shortcode') . '</h4>',
+    ];
+
+    $form['shortcode_display']['input_wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['bm-input-copy-group']],
+    ];
+
+    $form['shortcode_display']['input_wrapper']['shortcode_text'] = [
+      '#type' => 'textfield',
+      '#value' => $shortcode,
+      '#attributes' => [
+        'readonly' => 'readonly',
+        'id' => 'bm-shortcode-copy-target',
+        'class' => ['bm-standard-styled-input'],
+        'style' => 'width: ' . (strlen($shortcode) + 12) . 'ch; min-width: 250px;',
+      ],
+    ];
+
+    if ($entity_id) {
+      $form['shortcode_display']['input_wrapper']['copy_symbol'] = [
+        '#markup' => '<div class="bm-symbol-trigger" id="bm-copy-trigger" title="' . t('Copy') . '">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </div>',
+      ];
+    }
+
+    $form['#attached']['library'][] = 'book_management/admin_scripts';
+
     if (isset($form['color'])) {
       $form['color']['widget'][0]['value']['#type'] = 'color';
       $form['color']['widget'][0]['value']['#title'] = t('Pick Background Color');
     }
 
+    // 3. SHOW 'ALTERNATIVE TEXT' LABEL FOR PDF (Visible before upload)
+    if (isset($form['image']['widget'][0])) {
+      $form['image']['widget'][0]['#description'] = t('Provide Alternative Text for the Cover Image.');
+    }
+    if (isset($form['pdf']['widget'][0])) {
+      $form['pdf']['widget'][0]['#description'] = t('Alternative Text');
+    }
+
     // Add a custom submit handler to override the default redirect
-    // so the user goes back to the "All Books" table list page instead.
-    if (isset($form['actions'])) {
-      foreach (array_keys($form['actions']) as $action) {
-        if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
-          $form['actions'][$action]['#submit'][] = 'book_management_form_submit_redirect';
-        }
-      }
+    // ONLY for the main save button to avoid breaking File Upload AJAX.
+    if (isset($form['actions']['submit'])) {
+       $form['actions']['submit']['#submit'][] = 'book_management_form_submit_redirect';
     }
   }
 }
@@ -41,7 +90,17 @@ function book_management_form_alter(&$form, FormStateInterface $form_state, $for
  * PURPOSE: Redirects to the book collection list after saving an entity.
  */
 function book_management_form_submit_redirect(array &$form, FormStateInterface $form_state) {
-  $form_state->setRedirect('entity.book_item.collection');
+  $form_object = $form_state->getFormObject();
+  $entity = $form_object->getEntity();
+  
+  // Both adding and editing should reload the same book's edit page so the user
+  // can immediately see the generated Shortcode.
+  if ($entity && $entity->id()) {
+    $form_state->setRedirect('entity.book_item.edit_form', ['book_item' => $entity->id()]);
+  }
+  else {
+    $form_state->setRedirect('entity.book_item.collection');
+  }
 }
 
 /**
