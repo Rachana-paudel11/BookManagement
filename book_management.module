@@ -19,6 +19,51 @@ use Drupal\Core\Url;
  */
 function book_management_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id === 'book_item_add_form' || $form_id === 'book_item_edit_form') {
+    
+    // 1. CONSISTENT SHORTCODE HELPER AT THE TOP
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity->id()) {
+      $shortcode = '[book_cards id="' . $entity->id() . '"]';
+      
+      $form['shortcode_display'] = [
+        '#type' => 'container',
+        '#weight' => -100,
+        '#attributes' => ['class' => ['bm-consistent-helper']],
+      ];
+
+      $form['shortcode_display']['label'] = [
+        '#markup' => '<h4 class="bm-consistent-label">' . t('Shortcode') . '</h4>',
+      ];
+
+      $form['shortcode_display']['input_wrapper'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['bm-input-copy-group']],
+      ];
+
+      $form['shortcode_display']['input_wrapper']['shortcode_text'] = [
+        '#type' => 'textfield',
+        '#value' => $shortcode,
+        '#attributes' => [
+          'readonly' => 'readonly',
+          'id' => 'bm-shortcode-copy-target',
+          'class' => ['bm-standard-styled-input'],
+          'style' => 'width: ' . (strlen($shortcode) + 8) . 'ch; min-width: 280px;',
+        ],
+      ];
+
+      $form['shortcode_display']['input_wrapper']['copy_symbol'] = [
+        '#markup' => '<div class="bm-symbol-trigger" id="bm-copy-trigger" title="' . t('Copy') . '">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </div>',
+      ];
+    }
+
+    $form['#attached']['library'][] = 'book_management/admin_scripts';
+
+    // 2. TRANSFORM COLOR PICKER
     if (isset($form['color'])) {
       $form['color']['widget'][0]['value']['#type'] = 'color';
       $form['color']['widget'][0]['value']['#title'] = t('Pick Background Color');
@@ -38,17 +83,37 @@ function book_management_form_alter(&$form, FormStateInterface $form_state, $for
 
 /**
  * Custom submit handler for book forms.
- * PURPOSE: Redirects to the book collection list after saving an entity.
+ * PURPOSE: Redirects to the appropriate page after saving an entity.
  */
 function book_management_form_submit_redirect(array &$form, FormStateInterface $form_state) {
-  $form_state->setRedirect('entity.book_item.collection');
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $form_object = $form_state->getFormObject();
+  $entity = $form_object->getEntity();
+  
+  if ($route_name === 'entity.book_item.add_form') {
+    // Show a success message for a new entry.
+    \Drupal::messenger()->addStatus(t('Success! A new book entry has been created and saved.'));
+  }
+  else {
+    // Show a success message for an edited entry.
+    \Drupal::messenger()->addStatus(t('Success! Your edits to this book have been updated.'));
+  }
+
+  // Both adding and editing should reload the same book's edit page.
+  if ($entity && $entity->id()) {
+    $form_state->setRedirect('entity.book_item.edit_form', ['book_item' => $entity->id()]);
+  }
 }
 
 /**
  * Implements hook_toolbar().
  * PURPOSE: Adds the module link and book icon to the main Drupal admin toolbar.
  */
+/*
 function book_management_toolbar() {
+  if (!\Drupal::entityTypeManager()->hasDefinition('book_item')) {
+    return [];
+  }
   $items = [];
   $items['book_management'] = [
     '#type' => 'toolbar_item',
@@ -68,6 +133,7 @@ function book_management_toolbar() {
   ];
   return $items;
 }
+*/
 
 /**
  * Implements hook_page_attachments().
@@ -84,6 +150,44 @@ function book_management_page_attachments(array &$attachments) {
  * of traditional shortcodes to prevent theme conflicts and server crashes.
  */
 function book_management_node_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+  if (!\Drupal::entityTypeManager()->hasDefinition('book_item')) {
+    return;
+  }
+  if (isset($build['body'][0]['#text'])) {
+    $text = $build['body'][0]['#text'];
+    
+    // Find all occurrences of the book_cards tag
+    if (preg_match_all('/\[?book_cards(\s+id="([\d,]+)")?\]?/', $text, $matches, PREG_SET_ORDER)) {
+      $final_text = $text;
+      $has_rendered = FALSE;
+
+      foreach ($matches as $match) {
+        $full_tag = $match[0];
+        $ids_string = !empty($match[2]) ? $match[2] : NULL;
+        
+        $rendered_html = book_management_render_books($ids_string);
+        if ($rendered_html) {
+          $final_text = str_replace($full_tag, $rendered_html, $final_text);
+          $has_rendered = TRUE;
+        }
+      }
+
+      if ($has_rendered) {
+        $build['body'][0]['#text'] = Markup::create($final_text);
+        $build['#attached']['library'][] = 'book_management/book_cards';
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view() for 'block_content'.
+ * PURPOSE: Allows the shortcode to be placed inside Custom Blocks as well.
+ */
+function book_management_block_content_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+  if (!\Drupal::entityTypeManager()->hasDefinition('book_item')) {
+    return;
+  }
   if (isset($build['body'][0]['#text'])) {
     $text = $build['body'][0]['#text'];
     

@@ -43,7 +43,7 @@ class BookListBuilder extends EntityListBuilder {
 
     $row['shortcode'] = [
       'data' => [
-        '#markup' => '<code style="background:#f1f5f9; padding:4px 8px; border-radius:4px;">book_cards id="' . $entity->id() . '"</code>',
+        '#markup' => '<code style="background:#f1f5f9; padding:4px 8px; border-radius:4px;">[book_cards id="' . $entity->id() . '"]</code>',
       ],
     ];
 
