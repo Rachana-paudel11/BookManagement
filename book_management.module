@@ -131,8 +131,9 @@ function book_management_render_books($ids_string = NULL) {
     $books = $storage->loadMultiple($found_ids);
     $output = '<div class="bm-book-grid">';
     
+    $default_color = \Drupal::config('book_management.settings')->get('default_color') ?: '#6c5ce7';
     foreach ($books as $book) {
-      $color = $book->get('color')->value ?: '#6c5ce7';
+      $color = $book->get('color')->value ?: $default_color;
       $title = $book->label();
       $desc = $book->get('description')->value ?? '';
       $image_url = ($img = $book->get('image')->entity) ? \Drupal::service('file_url_generator')->generateAbsoluteString($img->getFileUri()) : "";

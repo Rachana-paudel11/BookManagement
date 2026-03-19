@@ -66,9 +66,10 @@ class Book extends ContentEntityBase {
       ->setDisplayOptions('form', ['type' => 'text_textarea', 'weight' => 0])
       ->setDisplayConfigurable('form', TRUE);
 
+    $config = \Drupal::config('book_management.settings');
     $fields['color'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Background Color'))
-      ->setDefaultValue('#6c5ce7')
+      ->setDefaultValue($config->get('default_color') ?: '#6c5ce7')
       ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 5])
       ->setDisplayConfigurable('form', TRUE);
 

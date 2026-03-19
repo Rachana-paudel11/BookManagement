@@ -11,9 +11,19 @@ namespace Drupal\book_management;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Url;
 
 class BookListBuilder extends EntityListBuilder {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage) {
+    parent::__construct($entity_type, $storage);
+    $this->limit = \Drupal::config('book_management.settings')->get('items_per_page') ?: 20;
+  }
 
   /**
    * Defines the columns for the admin table.
@@ -47,7 +57,8 @@ class BookListBuilder extends EntityListBuilder {
       ],
     ];
 
-    $color = $entity->get('color')->value ?: '#6c5ce7';
+    $default_color = \Drupal::config('book_management.settings')->get('default_color') ?: '#6c5ce7';
+    $color = $entity->get('color')->value ?: $default_color;
     $row['color'] = [
       'data' => [
         '#markup' => '<div style="display:flex;align-items:center;gap:10px;">'
