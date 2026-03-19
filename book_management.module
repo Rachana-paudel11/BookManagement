@@ -96,7 +96,25 @@ function book_management_form_submit_redirect(array &$form, FormStateInterface $
   // Both adding and editing should reload the same book's edit page so the user
   // can immediately see the generated Shortcode.
   if ($entity && $entity->id()) {
-    $form_state->setRedirect('entity.book_item.edit_form', ['book_item' => $entity->id()]);
+    $label = $entity->label();
+    $id = $entity->id();
+    $shortcode = '[book_cards id="' . $id . '"]';
+    
+    // Premium Success Message with integrated shortcode for better UX.
+    $message = Markup::create('
+      <div class="bm-success-message">
+        <span class="bm-success-icon">✓</span>
+        <span class="bm-success-text">' . 
+          t('Success! The Book "<strong>@label</strong>" has been saved. Copy shortcode: <code>@shortcode</code>', [
+            '@label' => $label,
+            '@shortcode' => $shortcode,
+          ]) . 
+        '</span>
+      </div>
+    ');
+    
+    \Drupal::messenger()->addStatus($message);
+    $form_state->setRedirect('entity.book_item.edit_form', ['book_item' => $id]);
   }
   else {
     $form_state->setRedirect('entity.book_item.collection');
