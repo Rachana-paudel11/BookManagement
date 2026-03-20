@@ -1,26 +1,31 @@
-(function ($, Drupal) {
+(function ($, Drupal, once) {
   Drupal.behaviors.bookManagementCopy = {
     attach: function (context, settings) {
-      $('#bm-copy-trigger', context).once('bmCopy').on('click', function (e) {
-        e.preventDefault();
-        var copyText = document.getElementById("bm-shortcode-copy-target");
-        
-        // Select & Copy
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
+      // Modern Drupal 10+ 'once' implementation
+      once('bmCopy', '#bm-copy-trigger', context).forEach(function (element) {
+        $(element).on('click', function (e) {
+          e.preventDefault();
+          var copyTarget = document.getElementById("bm-shortcode-copy-target");
+          
+          if (copyTarget) {
+            // Select and Copy
+            copyTarget.select();
+            copyTarget.setSelectionRange(0, 99999);
 
-        try {
-          if (navigator.clipboard) {
-            navigator.clipboard.writeText(copyText.value).then(() => {
-              showSuccess($(this));
-            });
-          } else {
-            document.execCommand("copy");
-            showSuccess($(this));
+            try {
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(copyTarget.value).then(() => {
+                  showSuccess($(this));
+                });
+              } else {
+                document.execCommand("copy");
+                showSuccess($(this));
+              }
+            } catch (err) {
+              console.error('Failed to copy', err);
+            }
           }
-        } catch (err) {
-          console.error('Failed to copy', err);
-        }
+        });
       });
 
       function showSuccess($btn) {
@@ -31,4 +36,4 @@
       }
     }
   };
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

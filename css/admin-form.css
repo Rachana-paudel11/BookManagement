@@ -20,15 +20,14 @@
   position: relative;
   display: inline-flex !important;
   align-items: center;
-  /* Remove max-width to allow the input to take its defined size */
 }
 
 .bm-standard-styled-input {
   background-color: #fff !important;
   border: 1px solid #ccc !important;
   border-radius: 3px !important;
-  padding: 8px 45px 8px 12px !important; /* Increased padding for the larger icon */
-  font-family: 'Courier New', Courier, monospace !important; /* Fixed width font for predictability */
+  padding: 8px 45px 8px 12px !important; 
+  font-family: 'Courier New', Courier, monospace !important; 
   font-size: 15px !important;
   color: #444 !important;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.1) !important;
@@ -46,7 +45,7 @@
   position: absolute;
   right: 12px;
   cursor: pointer;
-  color: #1a1a1a; /* Darker for better visibility */
+  color: #1a1a1a; 
   display: flex;
   align-items: center;
   transition: all 0.2s ease;
@@ -60,4 +59,82 @@
 
 .bm-symbol-trigger.bm-copied-success {
   color: #2ecc71 !important;
+}
+
+/* 4. CUSTOM LOADER STYLES FOR IMAGE AND PDF */
+.field-name-image, .field-name-pdf {
+  position: relative;
+}
+
+/* Target Drupal's built-in AJAX throbber */
+.ajax-progress-throbber {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 15px !important;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+  margin-left: 10px;
+}
+
+/* Make it look like a spinning loader icon */
+.ajax-progress-throbber .throbber {
+  width: 20px !important;
+  height: 20px !important;
+  border: 2px solid #0073aa !important;
+  border-top-color: transparent !important;
+  border-radius: 50% !important;
+  animation: bm-spin 0.8s linear infinite !important;
+  margin-right: 8px !important;
+  background: none !important;
+}
+
+/* Custom "Uploading..." text next to it */
+.ajax-progress-throbber .message {
+  font-size: 13px !important;
+  color: #0073aa !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes bm-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Blur the field slightly while uploading */
+.ajax-progress-throbber + .form-file,
+.ajax-progress-throbber + .form-submit {
+  opacity: 0.6;
+}
+
+/* Premium Success Message Styles */
+.bm-success-message {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px;
+  line-height: normal !important;
+}
+
+.bm-success-icon {
+  font-weight: 900 !important;
+  font-size: 1.3rem !important;
+  color: #2ecc71;
+}
+
+.bm-success-text {
+  font-size: 14px;
+}
+
+.bm-success-text code {
+  background: rgba(0,0,0,0.06) !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  font-weight: 700 !important;
+  color: #6366f1 !important;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+  margin-left: 5px;
 }

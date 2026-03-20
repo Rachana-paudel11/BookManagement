@@ -18,7 +18,9 @@ admin_scripts:
       css/admin-form.css: {}
   js:
     js/admin-copy.js: {}
+    js/form-validation.js: {}
   dependencies:
     - core/drupal
     - core/jquery
+    - core/once
     - core/drupal.dialog.ajax
