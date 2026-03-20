@@ -29,7 +29,10 @@ book_management.add:
   route_name: entity.book_item.add_form
   weight: 2
 
+<<<<<<< Updated upstream
 # Sub-menu: Settings
+=======
+>>>>>>> Stashed changes
 book_management.settings:
   title: 'Settings'
   description: 'Manage global book configurations.'

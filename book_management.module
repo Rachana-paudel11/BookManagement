@@ -20,10 +20,24 @@ use Drupal\Core\Url;
 function book_management_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id === 'book_item_add_form' || $form_id === 'book_item_edit_form') {
     if (isset($form['color'])) {
+      $config = \Drupal::config('book_management.settings');
+      $global_color = $config->get('default_color') ?: '#6c5ce7';
       $form['color']['widget'][0]['value']['#type'] = 'color';
       $form['color']['widget'][0]['value']['#title'] = t('Pick Background Color');
+      $form['color']['widget'][0]['value']['#description'] = t('Default is set to %color in global settings.', ['%color' => $global_color]);
     }
 
+<<<<<<< Updated upstream
+=======
+    // 3. SHOW 'ALTERNATIVE TEXT' LABEL FOR PDF AND IMAGE
+    if (isset($form['image']['widget'][0])) {
+      $form['image']['widget'][0]['#description'] = t('Upload a cover image and provide alternative text for accessibility (required).');
+    }
+    if (isset($form['pdf']['widget'][0])) {
+      $form['pdf']['widget'][0]['#description'] = t('Upload the PDF file and optionally provide a description.');
+    }
+
+>>>>>>> Stashed changes
     // Add a custom submit handler to override the default redirect
     // so the user goes back to the "All Books" table list page instead.
     if (isset($form['actions'])) {
