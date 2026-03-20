@@ -66,29 +66,41 @@ class Book extends ContentEntityBase {
       ->setDisplayOptions('form', ['type' => 'text_textarea', 'weight' => 0])
       ->setDisplayConfigurable('form', TRUE);
 
+    $config = \Drupal::config('book_management.settings');
     $fields['color'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Background Color'))
-      ->setDefaultValue('#6c5ce7')
+      ->setDefaultValue($config->get('default_color') ?: '#6c5ce7')
       ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 5])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['image'] = BaseFieldDefinition::create('image')
       ->setLabel(t('Cover Image'))
+<<<<<<< Updated upstream
+      ->setSettings(['file_extensions' => 'png jpg jpeg'])
+=======
       ->setSettings([
         'file_extensions' => 'png jpg jpeg',
         'file_directory' => 'book_covers',
         'uri_scheme' => 'public',
+        'alt_field' => 1,
+        'alt_field_required' => 1,
       ])
+>>>>>>> Stashed changes
       ->setDisplayOptions('form', ['type' => 'image_image', 'weight' => 10])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['pdf'] = BaseFieldDefinition::create('file')
       ->setLabel(t('PDF File'))
+<<<<<<< Updated upstream
+      ->setSettings(['file_extensions' => 'pdf'])
+=======
       ->setSettings([
         'file_extensions' => 'pdf',
         'file_directory' => 'book_pdfs',
         'uri_scheme' => 'public',
+        'description_field' => 1,
       ])
+>>>>>>> Stashed changes
       ->setDisplayOptions('form', ['type' => 'file_generic', 'weight' => 15])
       ->setDisplayConfigurable('form', TRUE);
 

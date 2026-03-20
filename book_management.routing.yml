@@ -13,3 +13,11 @@ entity.book_item.collection_alt:
     _title: 'Books'
   requirements:
     _permission: 'administer site configuration'
+
+book_management.settings:
+  path: '/admin/config/content/book-management'
+  defaults:
+    _form: 'Drupal\book_management\Form\SettingsForm'
+    _title: 'Book Management Settings'
+  requirements:
+    _permission: 'administer site configuration'

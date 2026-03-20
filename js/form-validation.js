@@ -12,13 +12,19 @@
           var $desc = $form.find('textarea[name="description[0][value]"]');
           var $img = $form.find('input[name^="image[0][fids]"]');
           var $pdf = $form.find('input[name^="pdf[0][fids]"]');
+          var $imgAlt = $form.find('input[name^="image[0][alt]"]');
+          var $pdfDesc = $form.find('input[name^="pdf[0][description]"]');
 
           var titleOk = $title.val().trim() !== '';
           var descOk = $desc.val() && $desc.val().trim() !== '';
           var imgOk = $img.val() && $img.val() !== '';
           var pdfOk = $pdf.val() && $pdf.val() !== '';
+          
+          // Optional fields that become required once file is chosen
+          var imgAltOk = $imgAlt.length === 0 || ($imgAlt.val() && $imgAlt.val().trim() !== '');
+          var pdfDescOk = $pdfDesc.length === 0 || ($pdfDesc.val() && $pdfDesc.val().trim() !== '');
 
-          if (titleOk && descOk && imgOk && pdfOk) {
+          if (titleOk && descOk && imgOk && pdfOk && imgAltOk && pdfDescOk) {
             $saveButton.prop('disabled', false).css('opacity', '1').css('pointer-events', 'auto');
           } else {
             $saveButton.prop('disabled', true).css('opacity', '0.5').css('pointer-events', 'none');
