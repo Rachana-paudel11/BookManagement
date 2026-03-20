@@ -71,12 +71,12 @@ function book_management_form_alter(&$form, FormStateInterface $form_state, $for
       $form['color']['widget'][0]['value']['#title'] = t('Pick Background Color');
     }
 
-    // 3. SHOW 'ALTERNATIVE TEXT' LABEL FOR PDF (Visible before upload)
+    // 3. IMPROVED FIELD GUIDES (Visible before upload)
     if (isset($form['image']['widget'][0])) {
-      $form['image']['widget'][0]['#description'] = t('Provide Alternative Text for the Cover Image.');
+      $form['image']['widget'][0]['#description'] = t('Upload a cover image. You will be asked for "Alternative Text" after the upload.');
     }
     if (isset($form['pdf']['widget'][0])) {
-      $form['pdf']['widget'][0]['#description'] = t('Alternative Text');
+      $form['pdf']['widget'][0]['#description'] = t('Upload the book PDF. You can provide a "Description" after the upload.');
     }
 
     // Add a custom submit handler to override the default redirect
@@ -261,8 +261,11 @@ function book_management_render_books($ids_string = NULL) {
       $image_url = ($img = $book->get('image')->entity) ? \Drupal::service('file_url_generator')->generateAbsoluteString($img->getFileUri()) : "";
       $pdf_url = ($pdf = $book->get('pdf')->entity) ? \Drupal::service('file_url_generator')->generateAbsoluteString($pdf->getFileUri()) : "";
       
-      $img_html = $image_url ? "<div class='bm-card-image-outer'><div class='bm-card-image'><img src='$image_url' alt='$title'></div></div>" : "";
-      $btn_html = $pdf_url ? "<div class='bm-card-footer'><a href='$pdf_url' class='bm-btn-capsule' target='_blank'><span class='bm-btn-text'>Download</span></a></div>" : "";
+      $alt_text = $book->get('image')->alt ?: $title;
+      $img_html = $image_url ? "<div class='bm-card-image-outer'><div class='bm-card-image'><img src='$image_url' alt='" . htmlspecialchars($alt_text, ENT_QUOTES) . "'></div></div>" : "";
+      
+      $pdf_label = $book->get('pdf')->description ?: t('Download');
+      $btn_html = $pdf_url ? "<div class='bm-card-footer'><a href='$pdf_url' class='bm-btn-capsule' target='_blank'><span class='bm-btn-text'>$pdf_label</span></a></div>" : "";
 
       $output .= "
         <div class='bm-card-wrapper'>
