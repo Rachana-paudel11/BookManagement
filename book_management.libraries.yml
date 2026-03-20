@@ -11,3 +11,14 @@ toolbar:
   css:
     theme:
       css/toolbar.css: {}
+
+admin_scripts:
+  css:
+    theme:
+      css/admin-form.css: {}
+  js:
+    js/admin-copy.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/drupal.dialog.ajax

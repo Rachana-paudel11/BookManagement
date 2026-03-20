@@ -74,13 +74,21 @@ class Book extends ContentEntityBase {
 
     $fields['image'] = BaseFieldDefinition::create('image')
       ->setLabel(t('Cover Image'))
-      ->setSettings(['file_extensions' => 'png jpg jpeg'])
+      ->setSettings([
+        'file_extensions' => 'png jpg jpeg',
+        'file_directory' => 'book_covers',
+        'uri_scheme' => 'public',
+      ])
       ->setDisplayOptions('form', ['type' => 'image_image', 'weight' => 10])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['pdf'] = BaseFieldDefinition::create('file')
       ->setLabel(t('PDF File'))
-      ->setSettings(['file_extensions' => 'pdf'])
+      ->setSettings([
+        'file_extensions' => 'pdf',
+        'file_directory' => 'book_pdfs',
+        'uri_scheme' => 'public',
+      ])
       ->setDisplayOptions('form', ['type' => 'file_generic', 'weight' => 15])
       ->setDisplayConfigurable('form', TRUE);
 

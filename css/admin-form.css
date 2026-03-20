@@ -1,0 +1,63 @@
+/**
+ * css/admin-form.css
+ * Consistent Drupal-style Shortcode Helper
+ */
+
+.bm-consistent-helper {
+  margin-bottom: 25px !important;
+  display: block;
+}
+
+.bm-consistent-label {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.bm-input-copy-group {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  /* Remove max-width to allow the input to take its defined size */
+}
+
+.bm-standard-styled-input {
+  background-color: #fff !important;
+  border: 1px solid #ccc !important;
+  border-radius: 3px !important;
+  padding: 8px 45px 8px 12px !important; /* Increased padding for the larger icon */
+  font-family: 'Courier New', Courier, monospace !important; /* Fixed width font for predictability */
+  font-size: 15px !important;
+  color: #444 !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1) !important;
+  box-sizing: border-box !important;
+  outline: none;
+  height: 40px !important;
+  line-height: normal !important;
+}
+
+.bm-standard-styled-input:focus {
+  border-color: #0073aa !important;
+}
+
+.bm-symbol-trigger {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  color: #1a1a1a; /* Darker for better visibility */
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.bm-symbol-trigger:hover {
+  color: #0073aa;
+  transform: scale(1.15);
+}
+
+.bm-symbol-trigger.bm-copied-success {
+  color: #2ecc71 !important;
+}

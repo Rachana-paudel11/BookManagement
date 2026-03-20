@@ -8,7 +8,7 @@ Welcome! This module is designed to help you build a professional-looking book l
 ## 🏗️ How It Works (Simple Flow)
 Building your library is as easy as **1-2-3**:
 1. **Create**: Add a book via the simple admin form.
-2. **Copy**: Find the "Shortcode" (like `book_cards id="1"`) in your list.
+2. **Copy**: Find the "Shortcode" (like `[book_cards id="1"]`) in your list.
 3. **Paste**: Paste that code into any page, and the beautiful card appears!
 
 ---
@@ -33,10 +33,10 @@ Building your library is as easy as **1-2-3**:
 
 ### 3. Displaying Books on Your Site (Where to Paste)
 Once you've saved a book, go to `/admin/book-management`. You will see a table.
-Look for the **Shortcode** column. It looks like this: `book_cards id="5"`.
+Look for the **Shortcode** column. It looks like this: `[book_cards id="5"]`.
 
-**Step-by-Step for First-Timers:**
-1.  **Copy** the command text (e.g., `book_cards id="5"`) from the admin list.
+**Step-by-Step for First-Timers (Pages & Articles):**
+1.  **Copy** the command text (e.g., `[book_cards id="5"]`) from the admin list.
 2.  Go to your site's main menu and click **Content** (`/admin/content`).
 3.  Find the Page or Article where you want the book to appear and click **Edit**.
 4.  Locate the **Body** field (this is the big text box where you normally write your content).
@@ -44,17 +44,23 @@ Look for the **Shortcode** column. It looks like this: `book_cards id="5"`.
 6.  Scroll to the bottom and click **Save**.
 7.  **Success!** When you view the page, that text will now be replaced by the beautiful animated book card.
 
+**Step-by-Step for Custom Blocks (Sidebars, Footers, etc.):**
+1. Go to **Structure > Block layout > Custom block library** (`/admin/structure/block/block-content`).
+2. Click **+ Add custom block**.
+3. **Paste** the exactly same command (e.g., `[book_cards]`) into the Block body.
+4. Click **Save**, and then place your new Custom Block into any region of your site using the Block Layout screen!
+
 ---
 
 ## 💡 What is a "Shortcode"? (For Beginners)
 A **Shortcode** is a tiny piece of text that tells Drupal to do something big.
-Instead of writing complex code, you just type `book_cards` and the module replaces it with a fully designed, animated book grid.
+Instead of writing complex code, you just type `[book_cards]` and the module replaces it with a fully designed, animated book grid.
 
 | Type | What you type | What happens |
 | :--- | :--- | :--- |
-| **Full Library** | `book_cards` | Shows **EVERY** book you've added. |
-| **Single Book** | `book_cards id="1"` | Shows only that specific book. |
-| **Group selection** | `book_cards id="1,3,7"` | Shows just those specific books in a row. |
+| **Full Library** | `[book_cards]` | Shows **EVERY** book you've added. |
+| **Single Book** | `[book_cards id="1"]` | Shows only that specific book. |
+| **Group selection** | `[book_cards id="1,3,7"]` | Shows just those specific books in a row. |
 
 ---
 
